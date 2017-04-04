@@ -50,7 +50,7 @@
 Introduction
 ============
 
-Running self-calibration on an LSST-sized dataset is difficult (though not impossible xxx-cite self cal doc). It would be convenient if there was an external source of calibration stars we could use to set LSST observation zeropoints. 
+Running self-calibration (aka ubercal) on an LSST-sized dataset is difficult (though not impossible xxx-cite self cal doc). It would be convenient if there was an external source of calibration stars we could use to set LSST observation zeropoints. 
 
 GAIA and ULYSSES
 ================
@@ -62,27 +62,95 @@ Python wrappers to the ULYSSES code can be found in the `sims_gaia_calib repo <h
 Generating a GAIA-like Catalog
 ==============================
 
-By default, ULYSSES output is in terms of electrons. To calibrate the output spectra to physical units, we run a flat spectrum source through ULYSSES and use the noiseless output to define the instrument response function. We are essentially assuming GAIA will be able to calibrate it's spectra to a level where the calibration does not significantly contribute to the final spectra. 
+By default, ULYSSES output is in terms of electrons. To calibrate the output spectra to physical units, we run a flat spectrum source through ULYSSES and use the noiseless output to define the instrument response function. We are essentially assuming GAIA will be able to calibrate it's spectra to a level where the calibration does not significantly contribute to the final spectra noise. 
 
 xxx-figures of input spectrum, output from ULYSSES, post response function.
 
-The BP and RP channels have a region of overlap. For simplicity, we take just the BP output blueward of 675 nm and the RP output redward. In theory, one could slightly increase the SNR in the overlap region by properly weighting and combining the spectra. This would only impact the LSST *r* filter.
+.. figure:: /_static/example_input_spec.png
+   :name: fig-example_input
 
-The GAIA wavelength coverage does not extend to cover all the *u* filter. The SNR can also get very low in the *y* band. We thus define new *u_short* and *y_short* filters that are identical to the LSST filters, but have sharp cutoffs so they remain in the GAIA wavelength coverage.
+   Example stellar spectrum input to ULSYSSES with the LSST filters overplotted.
 
-xxx-figure of used passbands. 
+.. figure:: /_static/example_output_spec.png
+  :name: fig-example_output
+
+  Example of the resulting BP/RP spectra when the input spectrum is passed through ULYSSES.
+
+The BP and RP channels have a region of overlap. For simplicity, we use the BP output blueward of 675 nm and the RP output redward. In theory, one could slightly increase the SNR in the overlap region by properly weighting and combining the spectra. This would only impact the LSST *r* filter.
+
+
+We use a subset of the Gaia GUMS catalog to generate Gaia end-of-mission quality spectra for all the stars down to G~20 in a single LSST pointing. We then compute synthetic LSST magnitudes for each star. 
+
+.. figure:: /_static/g_resids.png
+   :name: fig-g_resids
+   :scale: 75
+
+   Residuals of recovered *g* magnitudes.
+
+.. figure:: /_static/r_resids.png
+   :name: fig-r_resids
+   :scale: 75
+
+   Residuals of recovered *r* magnitudes.
+
+.. figure:: /_static/i_resids.png
+   :name: fig-i_resids
+   :scale: 75
+
+   Residuals of recovered *i* magnitudes.
+
+.. figure:: /_static/z_resids.png
+   :name: fig-z_resids
+   :scale: 75
+
+   Residuals of recovered *z* magnitudes.
+
+.. figure:: /_static/y_resids.png
+   :name: fig-y_resids
+   :scale: 75
+
+   Residuals of recovered *y* magnitudes.
+
+
+The GAIA wavelength coverage does not extend to cover all the *u* filter.  We thus define new *u_short* filter that is identical to the LSST filter, but has sharp cutoffs so it remains in the Gaia wavelength coverage.
+
+
+.. figure:: /_static/ u_truncated_resids.png
+   :name: fig-u_resids
+   :scale: 75
+
+   Residuals of recovered *u*-truncated magnitudes.
+
+
+Results
+=======
+
+Note the GUMS field which we used is located at (RA, dec) = (340.104, 27.547) with 33,000 stars (13,000 in the range 17 < g <  19). Scaling to the galactic pole, we would expect the density of stars to drop to ~25% that level. So we would still have ~30 Gaia stars per LSST CCD at the galactic pole. 
+
+
+
+Recovering the u-band
+=====================
+
+The synthetic y-band magnitudes are still useable because the LSST y throughput is very low in the region where Gaia cuts off. That is not true for the u-band, thus, if we are going to use Gaia to calibrate the u filter, there needs to be an extra step in extrapolating Gaia observations to LSST u-magnitudes.
+
+Two possible methods:
+1) Because there is some overlap between Gaia BP specta and LSST u, one could use model spectra to construct a synthetic u-u_gaia v u_gaia-g diagram from model spectra, then recover u from the Gaia data. 
+2) Gaia claims to return full stellar parameters for every star (Teff, Fe/H, log g). If those parameters are acccurate and precice enough, they could be converted to a model stellar spectrum and the LSST u could be computed. There is a risk of making things slightly circular, using GAIA derived stellar parameters to infer LSST u-magnitudes, which are then used to compute LSST colors that are used to fit stellar parameters. 
+
+
+Other Issues
+============
+
+Besides the difficulty in the u-band, Gaia will not observe as deep in the galactic plane. This leaves the possibility that there will not be any overlap in the Gaia observations and LSST stars that are not saturated. 
+
 
 Notes to self
 =============
 
 Things I need to do:
-* Verify that GAIA will get BP/RP for just about everything down to g=20
-* Run on GUMS stars on a full pointing sized field, so I can check corner chip precision
-* Grab stars from fatboy and make a full pointing field at the south galactic pole
 * work out u_short to u conversion
 * Need to make an LSST catalog of the stars, with errors
-* Then, difference of LSST observed mag with GAIA mag, calc uncertainty, compute zeropoint and error on each chip.
-* double check that my noise looks reasonable by plugging in stars that are on the example webpage.
 
 
 
@@ -90,4 +158,3 @@ Things I need to do:
 
    **This technote is not yet published.**
 
-   Checking if using calibration stars from GAIA is adequate to replace an ubercal procedure.
