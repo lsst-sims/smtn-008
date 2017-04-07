@@ -38,14 +38,13 @@
    Feel free to delete this instructional comment.
 
 :tocdepth: 1
+
 .. Please do not modify tocdepth; will be fixed when a new Sphinx theme is shipped.
 
 .. sectnum::
 
 .. Add content below. Do not include the document title.
 
-.. note::
-   **Writing and experiments in progress**
 
 Introduction
 ============
@@ -55,14 +54,14 @@ Running self-calibration (aka ubercal) on an LSST-sized dataset is difficult (th
 GAIA and ULYSSES
 ================
 
-The GAIA mission will observe around a billion stars. The BP/RP spectrograph will take low resolution spectra of the GAIA targets. `ULYSSES <http://www.mpia.de/gaia/projects/ulysses>`_.
+The GAIA mission will observe around a billion stars. The BP/RP spectrograph will take low resolution spectra of the GAIA targets. `ULYSSES <http://www.mpia.de/gaia/projects/ulysses>`_ can simulate the expected BP/RP observations given a stellar spectrum as input. 
 
 Python wrappers to the ULYSSES code can be found in the `sims_gaia_calib repo <https://github.com/lsst-sims/sims_gaia_calib>`_.
 
 Generating a GAIA-like Catalog
 ==============================
 
-By default, ULYSSES output is in terms of electrons. To calibrate the output spectra to physical units, we run a flat spectrum source through ULYSSES and use the noiseless output to define the instrument response function. We are essentially assuming GAIA will be able to calibrate it's spectra to a level where the calibration does not significantly contribute to the final spectra noise. 
+By default, ULYSSES output is in terms of electrons. To calibrate the output spectra to physical units, we run a flat spectrum source through ULYSSES and use the noiseless output to define the instrument response function. We are essentially assuming GAIA will be able to calibrate it's spectra to a level where the calibration does not significantly contribute to the final spectra noise. With the calibrated ULYSSES spectra, we can compute synthetic LSST magnitudes for the *g,r,i,z,y* filters. The BP spectra do not extend far enough into the blue to compute LSST *u* magnitudes.
 
 
 .. figure:: /_static/example_input_spec.png
@@ -78,7 +77,7 @@ By default, ULYSSES output is in terms of electrons. To calibrate the output spe
 The BP and RP channels have a region of overlap. For simplicity, we use the BP output blueward of 675 nm and the RP output redward. In theory, one could slightly increase the SNR in the overlap region by properly weighting and combining the spectra. This would only impact the LSST *r* filter.
 
 
-We use a subset of the Gaia GUMS catalog to generate Gaia end-of-mission (i.e., 75 transits) quality spectra for all the stars down to G~20 in a single LSST pointing. We then compute synthetic LSST magnitudes for each star. 
+We use a subset of the Gaia GUMS catalog to generate Gaia end-of-mission (i.e., 75 transits) quality spectra for all the stars down to G~20 in a single LSST pointing. For each star, we assign a suitable Kurucz model SED and use ULYSSES to compute a Gaia specrtum. We then compute synthetic LSST magnitudes for each star. 
 
 .. figure:: /_static/g_resids.png
    :name: fig-g_resids
@@ -111,15 +110,6 @@ We use a subset of the Gaia GUMS catalog to generate Gaia end-of-mission (i.e., 
    Residuals of recovered *y* magnitudes.
 
 
-The GAIA wavelength coverage does not extend to cover all the *u* filter.  We thus define new *u_short* filter that is identical to the LSST filter, but has sharp cutoffs so it remains in the Gaia wavelength coverage.
-
-
-.. figure:: /_static/ u_truncated_resids.png
-   :name: fig-u_resids
-   :scale: 75
-
-   Residuals of recovered u-truncated magnitudes.
-
 
 Results
 =======
@@ -133,11 +123,7 @@ Recovering the u-band
 
 The synthetic y-band magnitudes are still usable because the LSST y throughput is very low in the region where Gaia cuts off. That is not true for the u-band, thus, if we are going to use Gaia to calibrate the u filter, there needs to be an extra step in extrapolating Gaia observations to LSST u-magnitudes.
 
-Two possible methods:
-1) Because there is some overlap between Gaia BP spectra and LSST u, one could use model spectra to construct a synthetic u-u_gaia v u_gaia-g diagram from model spectra, then recover u from the Gaia data. 
-2) Gaia claims to return full stellar parameters for every star (Teff, Fe/H, log g). If those parameters are accurate and precise enough, they could be converted to a model stellar spectrum and the LSST u could be computed. There is a risk of making things slightly circular, using GAIA derived stellar parameters to infer LSST u-magnitudes, which are then used to compute LSST colors that are used to fit stellar parameters. 
-
-`Lui et al <http://adsabs.harvard.edu/abs/2012MNRAS.426.2463L>`_ look at how well Gaia will be able to recover stellar parameters. 
+One possible solution is to use Gaia derived stellar parameters (Teff, Fe/H, log g) along with Kurucz models to interpolate the expected LSST *u* magnitude. `Lui et al <http://adsabs.harvard.edu/abs/2012MNRAS.426.2463L>`_ look at how well Gaia will be able to recover stellar parameters. 
 
 
 .. figure:: /_static/kuruz_met.png
@@ -170,15 +156,22 @@ Two possible methods:
 
 
 
+It should be possible to construct a u-band stellar catalog from the Gaia data that would be adequate for calibrating LSST observations **if**
+
+* stars can be described by Kurucz models
+
+* Gaia returns stellar parameters with their expected precision
 
 
-It would appear that if
+As a check on how well Kurucz models can convert Gaia observations into *u-g* colors, we take the `stsci grid <http://www.stsci.edu/science/starburst/Kurucz.html>`_ of models (plotted in :numref:`fig-kurucz-met`) and withhold a random 10% of the points (110 points) and use the remaining 90% (990 points) to interpolate the expected $u-g$ color using the scipy LinearNDInterpolator which uses Qhull and rescales the input dimensions.  
 
-* we believe that stars can be described by Kurucz models
+For red stars (*u-g* > 0.5), the *u-g* color of the interpolated points has an RMS error of 0.04 mag. It may be possible to reduce the interpolation error by using a finer grid of stellar atmospheres, or possibly using a more sophisticated interpolation method. 
 
-* we believe Gaia will return stellar parameters with their expected precision
+.. figure:: /_static/interp_verify.png
+   :name: fig-interp_verify
 
-it should be possible to construct a u-band stellar catalog from the Gaia data that would be adequate for calibrating LSST observations.
+   Testing the ability to correctly interpolate u-g color from Kurucz models given g-r, metallicity, and log g. 
+
 
 
 Other Issues
@@ -189,9 +182,4 @@ Besides the difficulty in extrapolating the u-band, Gaia will not observe as dee
 The Gaia `data release scenarios <https://www.cosmos.esa.int/web/gaia/release>`_ do not include releasing the reduced BP/RP spectra, but only the derived stellar parameters. Thus we may need to request the Gaia collaboration compute synthetic LSST magnitudes or expand the scope of their data releases to include BP/RP (non-integrated) spectra.
 
 
-
-
-.. note::
-
-   **This technote is not yet published.**
 
