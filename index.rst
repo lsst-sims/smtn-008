@@ -76,6 +76,16 @@ By default, ULYSSES output is in terms of electrons. To calibrate the output spe
 
 The BP and RP channels have a region of overlap. For simplicity, we use the BP output blueward of 675 nm and the RP output redward. In theory, one could slightly increase the SNR in the overlap region by properly weighting and combining the spectra. This would only impact the LSST *r* filter.
 
+.. figure:: /_static/fov.png
+   :name: fig-GUMS-fov
+
+   A limited magnitude range of the stars used.
+
+.. figure:: /_static/star_mag_hist.png
+   :name: fig-starhist
+
+   Histogram of the r-band stellar magnitudes used from GUMS and simulated with ULYSSES.
+
 
 We use a subset of the Gaia GUMS catalog to generate Gaia end-of-mission (i.e., 75 transits) quality spectra for all the stars down to G~20 in a single LSST pointing. For each star, we assign a suitable Kurucz model SED and use ULYSSES to compute a Gaia specrtum. We then compute synthetic LSST magnitudes for each star. 
 
@@ -163,7 +173,7 @@ It should be possible to construct a u-band stellar catalog from the Gaia data t
 * Gaia returns stellar parameters with their expected precision
 
 
-As a check on how well Kurucz models can convert Gaia observations into *u-g* colors, we take the `stsci grid <http://www.stsci.edu/science/starburst/Kurucz.html>`_ of models (plotted in :numref:`fig-kurucz-met`) and withhold a random 10% of the points (110 points) and use the remaining 90% (990 points) to interpolate the expected $u-g$ color using the scipy LinearNDInterpolator which uses Qhull and rescales the input dimensions.  
+As a check on how well Kurucz models can convert Gaia observations into *u-g* colors, we take the `stsci grid <http://www.stsci.edu/science/starburst/Kurucz.html>`_ of models (plotted in :numref:`fig-kurucz-met`) and withhold a random 10% of the points (110 points) and use the remaining 90% (990 points) to interpolate the expected *u-g* color using the scipy LinearNDInterpolator which uses Qhull and rescales the input dimensions.  
 
 For red stars (*u-g* > 0.5), the *u-g* color of the interpolated points has an RMS error of 0.04 mag. It may be possible to reduce the interpolation error by using a finer grid of stellar atmospheres, or possibly using a more sophisticated interpolation method. 
 
