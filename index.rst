@@ -51,17 +51,17 @@ Introduction
 
 Running self-calibration (aka ubercal) on an LSST-sized dataset is difficult (though `not impossible <http://ls.st/doc-15125>`_). It would be convenient if there was an external source of calibration stars we could use to set LSST observation zeropoints. 
 
-GAIA and ULYSSES
+Gaia and ULYSSES
 ================
 
-The GAIA mission will observe around a billion stars. The BP/RP spectrograph will take low resolution spectra of the GAIA targets. `ULYSSES <http://www.mpia.de/gaia/projects/ulysses>`_ can simulate the expected BP/RP observations given a stellar spectrum as input. 
+The Gaia mission will observe around a billion stars. The BP/RP spectrograph will take low resolution spectra of the Gaia targets. `ULYSSES <http://www.mpia.de/Gaia/projects/ulysses>`_ can simulate the expected BP/RP observations given a stellar spectrum as input. 
 
-Python wrappers to the ULYSSES code can be found in the `sims_gaia_calib repo <https://github.com/lsst-sims/sims_gaia_calib>`_.
+Python wrappers to the ULYSSES code can be found in the `sims_Gaia_calib repo <https://github.com/lsst-sims/sims_Gaia_calib>`_.
 
-Generating a GAIA-like Catalog
+Generating a Gaia-like Catalog
 ==============================
 
-By default, ULYSSES output is in terms of electrons. To calibrate the output spectra to physical units, we run a flat spectrum source through ULYSSES and use the noiseless output to define the instrument response function. We are essentially assuming GAIA will be able to calibrate it's spectra to a level where the calibration does not significantly contribute to the final spectra noise. With the calibrated ULYSSES spectra, we can compute synthetic LSST magnitudes for the *g,r,i,z,y* filters. The BP spectra do not extend far enough into the blue to compute LSST *u* magnitudes.
+By default, ULYSSES output is in terms of electrons. To calibrate the output spectra to physical units, we run a flat spectrum source through ULYSSES and use the noiseless output to define the instrument response function. We are essentially assuming Gaia will be able to calibrate it's spectra to a level where the calibration does not significantly contribute to the final spectra noise. With the calibrated ULYSSES spectra, we can compute synthetic LSST magnitudes for the *g,r,i,z,y* filters. The BP spectra do not extend far enough into the blue to compute LSST *u* magnitudes.
 
 
 .. figure:: /_static/example_input_spec.png
@@ -189,7 +189,7 @@ Other Issues
 
 Besides the difficulty in extrapolating the u-band, Gaia will not observe as deep in the galactic plane. This leaves the possibility that there will not be any overlap in the Gaia observations and LSST stars that are not saturated. 
 
-The Gaia `data release scenarios <https://www.cosmos.esa.int/web/gaia/release>`_ do not include releasing the reduced BP/RP spectra, but only the derived stellar parameters. Thus we may need to request the Gaia collaboration compute synthetic LSST magnitudes or expand the scope of their data releases to include BP/RP (non-integrated) spectra.
+The Gaia `data release scenarios <https://www.cosmos.esa.int/web/Gaia/release>`_ do not include releasing the reduced BP/RP spectra, but only the derived stellar parameters. Thus we may need to request the Gaia collaboration compute synthetic LSST magnitudes or expand the scope of their data releases to include BP/RP (non-integrated) spectra.
 
 
 
