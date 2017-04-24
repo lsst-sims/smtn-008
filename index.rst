@@ -67,7 +67,7 @@ By default, ULYSSES output is in terms of electrons. To calibrate the output spe
 .. figure:: /_static/example_input_spec.png
    :name: fig-example_input
 
-   Example stellar spectrum input to ULSYSSES with the LSST filters shown.
+   Example stellar spectrum input to ULSYSSES with the LSST filters shown. The LSST u-band is shaded brown where it has overlap with Gaia. 
 
 .. figure:: /_static/example_output_spec.png
   :name: fig-example_output
@@ -93,7 +93,7 @@ We use a subset of the Gaia GUMS catalog to generate Gaia end-of-mission (i.e., 
    :name: fig-g_resids
    :scale: 75
 
-   Residuals of recovered *g* magnitudes.
+   Residuals of recovered *g* magnitudes. Blue lines show the 2-sigma (robust) RMS envelope.
 
 .. figure:: /_static/r_resids.png
    :name: fig-r_resids
@@ -126,6 +126,39 @@ Results
 
 Note the GUMS field which we used is located at (RA, dec) = (340.104, 27.547) with 33,000 stars (13,000 in the range 17 < g <  19). Scaling to the galactic pole, we would expect the density of stars to drop to ~25% that level. So we would still have ~30 Gaia stars per LSST CCD at the galactic pole that could be used for calibration. 
 
+We test how much area would be needed to calibrate a zeropoint to 5 millimag precision. In each filter, we use the magnitude range 17-18, and use our model of Mlky Way stellar density to scale the expected number of stars from our example GUMS location. For reference, a single LSST CCD is 176 sq arcmin in size. Thus, even at the galactic poles, we expect there should be enough Gaia stars measured with high enough precision to calibrate at the CCD scale (the y-band is starting to push the limit).
+
+.. figure:: /_static/area_needed_g.png
+   :name: area_needed_g
+   :scale: 75
+
+   Area needed to calibrate zeropoint to 5 millimags.
+
+.. figure:: /_static/area_needed_r.png
+   :name: area_needed_r
+   :scale: 75
+
+   Area needed to calibrate zeropoint to 5 millimags.
+
+.. figure:: /_static/area_needed_i.png
+   :name: area_needed_i
+   :scale: 75
+
+   Area needed to calibrate zeropoint to 5 millimags.
+
+.. figure:: /_static/area_needed_z.png
+   :name: area_needed_z
+   :scale: 75
+
+   Area needed to calibrate zeropoint to 5 millimags.
+
+.. figure:: /_static/area_needed_y.png
+   :name: area_needed_y
+   :scale: 75
+
+   Area needed to calibrate zeropoint to 5 millimags.
+
+
 
 
 Recovering the u-band
@@ -150,20 +183,36 @@ One possible solution is to use Gaia derived stellar parameters (Teff, Fe/H, log
    :name: fig-u-perfect
 
    If we assume Gaia returns perfect stellar parameters, the Gaia synthetic LSST *g* and *r* magnitudes can be used with
-   the Kurucz models to generate LSST *u* magnitudes with the plotted residual distribution. Results in 0.005 mag RMS at u=18.
+   the Kurucz models to generate LSST *u* magnitudes with the plotted residual distribution. Results in 0.005 mag RMS at u=18, with 
+   the dispersion due to the errors in the g and r photometry.
+
+.. figure:: /_static/area_needed_perfect.png
+   :name: fig-area-needed-perfect
+
+   The area needed to calibrate the u-band to 0.01 mag zeropoint precision with perfect knowledge of stellar parameters.
 
 
 .. figure:: /_static/u_good.png
    :name: fig-u-good
 
-   Same as :numref:`fig-u-perfect`, but inserting 0.1 dex RMS errors on both the metallicity and log g Gaia values.  Results in 0.002 mag RMS at u=18.
+   Same as :numref:`fig-u-perfect`, but inserting 0.1 dex RMS errors in the metallicity and 0.2 dex in log g Gaia values.  Results in 0.025 mag RMS at u=18.
+
+.. figure:: /_static/area_needed_good.png
+   :name: fig-area-needed-good
+
+   The area needed to calibrate the u-band to 0.01 mag zeropoint precision if the stellar parameters are "good".
+
 
 
 .. figure:: /_static/u_poor.png
    :name: fig-u-poor
 
-   Same as :numref:`fig-u-perfect`, but inserting 0.35 dex RMS errors on the metallicity and 0.2 dex errors on log g. Results in 0.06 mag RMS at u=18.
+   Same as :numref:`fig-u-perfect`, but inserting 0.3 dex RMS errors on the metallicity and 0.5 dex errors on log g. Results in 0.065 mag RMS at u=18.
 
+.. figure:: /_static/area_needed_poor.png
+   :name: fig-area-needed-poor
+
+   The area needed to calibrate the u-band to 0.01 mag zeropoint precision if the stellar parameters are "poor".
 
 
 It should be possible to construct a u-band stellar catalog from the Gaia data that would be adequate for calibrating LSST observations **if**
