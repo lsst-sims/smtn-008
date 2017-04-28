@@ -124,7 +124,7 @@ We use a subset of the Gaia GUMS catalog to generate Gaia end-of-mission (i.e., 
 Results
 =======
 
-Note the GUMS field which we used is located at (RA, dec) = (340.104, 27.547) with 33,000 stars (13,000 in the range 17 < g <  19). Scaling to the galactic pole, we would expect the density of stars to drop to ~25% that level. So we would still have ~30 Gaia stars per LSST CCD at the galactic pole that could be used for calibration. 
+Note the GUMS field which we used is located at (RA, dec) = (340.104, 27.547) aka (l,b)=(87.23, -25.0) with 33,000 stars (13,000 in the range 17 < g <  19). Scaling to the galactic pole, we would expect the density of stars to drop to ~25% that level. So we would still have ~30 Gaia stars per LSST CCD at the galactic pole that could be used for calibration. 
 
 We test how much area would be needed to calibrate a zeropoint to 5 millimag precision. In each filter, we use the magnitude range 17-18, and use our model of Mlky Way stellar density to scale the expected number of stars from our example GUMS location. For reference, a single LSST CCD is 176 sq arcmin in size. Thus, even at the galactic poles, we expect there should be enough Gaia stars measured with high enough precision to calibrate at the CCD scale (the y-band is starting to push the limit).
 
@@ -222,14 +222,14 @@ It should be possible to construct a u-band stellar catalog from the Gaia data t
 * Gaia returns stellar parameters with their expected precision
 
 
-As a check on how well Kurucz models can convert Gaia observations into *u-g* colors, we take the `stsci grid <http://www.stsci.edu/science/starburst/Kurucz.html>`_ of models (plotted in :numref:`fig-kurucz-met`) and withhold a random 10% of the points (110 points) and use the remaining 90% (990 points) to interpolate the expected *u-g* color using the scipy LinearNDInterpolator which uses Qhull and rescales the input dimensions.  
-
-For red stars (*u-g* > 0.5), the *u-g* color of the interpolated points has an RMS error of 0.04 mag. It may be possible to reduce the interpolation error by using a finer grid of stellar atmospheres, or possibly using a more sophisticated interpolation method. 
+Here we check on how well Kurucz models can convert Gaia observations into *u-g* colors.  We take the `stsci grid <http://www.stsci.edu/science/starburst/Kurucz.html>`_ of models (plotted in :numref:`fig-kurucz-met`) and withhold a random 10% of the points (110 points) and use the remaining 90% (990 points) to interpolate the expected *u-g* color using the scipy LinearNDInterpolator which uses Qhull and rescales the input dimensions.  For red stars (*u-g* > 0.5), the *u-g* color of the interpolated points has an RMS error of 0.04 mag. It may be possible to reduce the interpolation error by using a finer grid of stellar atmospheres, or possibly using a more sophisticated interpolation method. The interpolation seems to be very sensitive to
+the stellar metalicity (e.g., it does a poor job interpolating of there are not similar metallicity points nearby).
 
 .. figure:: /_static/interp_verify.png
    :name: fig-interp_verify
 
-   Testing the ability to correctly interpolate u-g color from Kurucz models given g-r, metallicity, and log g. 
+   Testing the ability to correctly interpolate u-g color from Kurucz models given g-r, metallicity, and log g. No random errors
+   were introduced.
 
 
 
