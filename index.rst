@@ -45,6 +45,15 @@
 
 .. Add content below. Do not include the document title.
 
+Executive Summary
+=================
+
+We investigate the possibility of using Gaia observations as a source of calibration stars for LSST observations.  A population of suitable Gaia stars could make it unnecessary to run ubercal on the LSST data. We find simulated Gaia BP/RP spectra can generate synthetic *g, r, i, z,* and *y* magnitudes for stars with adequate precision that they could be used to calibrate zeropoint magnitudes for individual LSST CCDs. 
+
+The Gaia specrta to not extend far enough into the blue to compute LSST *u* magnitudes. We explore the possibility of interpolating *u* magnitudes from Kurucz stellar models using the Gaia synthetic *g* and *r* magnitudes along with the Gaia fitted metallicity and surface gravity fitted values. We find the interpolating *u* magnitudes is very sensitive to the metallicity and would only be adequate with a larger stellar atmosphere library and/or better interpolation scheme.
+
+One final warning is that in the galactic plane, Gaia will only observe brighter stars. Since the BP/RP observations only share about 2 magnitudes of overlap with LSST, this means Gaia will not provide usable calibration stars for any filter in the galactic plane.
+
 
 Introduction
 ============
